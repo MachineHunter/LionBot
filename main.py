@@ -91,8 +91,8 @@ def handle_image(event):
 	line_bot_api.reply_message(
 		event.reply_token,
 		ImageSendMessage(
-			original_content_url = f"https://lionpro-linebot.herokuapp.com/{message_id}.jpg",
-			preview_image_url = f"https://lionpro-linebot.herokuapp.com/{message_id}.jpg"
+			original_content_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}.jpg",
+			preview_image_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}.jpg"
 		)
 	)
 
