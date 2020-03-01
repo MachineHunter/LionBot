@@ -1,4 +1,5 @@
 from flask import Flask, request, abort
+from pathlib import Path
 import os
 import sys
 import json
@@ -13,7 +14,7 @@ from linebot.exceptions import (
 )
 
 from linebot.models import (
-	MessageEvent, TextMessage, TextSendMessage,
+	MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage
 )
 
 
@@ -68,13 +69,32 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-	
 	word = event.message.text
 	line_bot_api.reply_message(
 		event.reply_token,
-		TextSendMessage(text=)
+		TextSendMessage(text=word)
 	)
 
+
+@handler.add(MessageEvent, message=ImageMessage)
+def handle_image(event):
+	message_id = event.message.id
+	message_content = line_bot_api.get_message_content(message_id)
+
+	#画像の保存
+	#Flaskにより画像はstatic配下の以下のパスに保存される
+	with open(Path(f"static/images/{message_id}.jpg").absolute(), "wb") as f:
+		#バイナリを1024ずつ書き込む
+		for chunk in message_content.iter_content():
+			f.write(chunk)
+
+	line_bot_api.reply_message(
+		event.reply_token,
+		ImageSendMessage(
+			original_content_url = f"https://lionpro-linebot.herokuapp.com/{message_id}.jpg",
+			preview_image_url = f"https://lionpro-linebot.herokuapp.com/{message_id}.jpg"
+		)
+	)
 
 
 
