@@ -1,9 +1,11 @@
 import cv2
 import sys
+import os
+assert os.path.isfile("./opencv/data/haarcascades/haarcascade_frontalface_alt.xml")
 
 
 def generateMozaic(imgpath, imgname):
-	cascade_file = "opencv/data/haarcascades/haarcascade_frontalface_alt.xml"
+	cascade_file = "./opencv/data/haarcascades/haarcascade_frontalface_alt.xml"
 
 	image = cv2.imread(imgpath)
 	image_gs = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -30,4 +32,4 @@ def generateMozaic(imgpath, imgname):
 		face_img = cv2.resize(face_img, (w,h), interpolation=cv2.INTER_AREA)
 		image[y:y+h, x:x+w] = face_img
 
-	cv2.imwrite("static/images/"+str(imgname), image)
+	cv2.imwrite("./static/images/"+str(imgname), image)
