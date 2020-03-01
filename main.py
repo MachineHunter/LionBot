@@ -90,7 +90,7 @@ def handle_image(event):
 		for chunk in message_content.iter_content():
 			f.write(chunk)
 
-	generateMozaic("./static/images/"+str(message_id)+".jpg", str(message_id)+"-mozaic.jpg")
+	generateMozaic(f"./static/images/{message_id}.jpg", f"{message_id}-mozaic.jpg")
 
 	line_bot_api.reply_message(
 		event.reply_token,
