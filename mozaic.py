@@ -1,7 +1,8 @@
-import cv2, sys, re
+import cv2
+import sys
 
 
-def generateMozaic(imgpath, message_id):
+def generateMozaic(imgpath, imgname):
 	cascade_file = "opencv/data/haarcascades/haarcascade_frontalface_alt.xml"
 
 	image = cv2.imread(imgpath)
@@ -29,4 +30,4 @@ def generateMozaic(imgpath, message_id):
 		face_img = cv2.resize(face_img, (w,h), interpolation=cv2.INTER_AREA)
 		image[y:y+h, x:x+w] = face_img
 
-	cv2.imwrite("static/images/"+str(message_id)+".jpg", image)
+	cv2.imwrite("static/images/"+str(imgname), image)

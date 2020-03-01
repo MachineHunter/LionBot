@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 import sys
 import json
+from mozaic import generateMozaic
 
 
 from linebot import (
@@ -80,19 +81,22 @@ def handle_message(event):
 def handle_image(event):
 	message_id = event.message.id
 	message_content = line_bot_api.get_message_content(message_id)
+	original_image = Path(f"static/images/{message_id}.jpg").absolute();
 
 	#画像の保存
 	#Flaskにより画像はstatic配下の以下のパスに保存される
-	with open(Path(f"static/images/{message_id}.jpg").absolute(), "wb") as f:
+	with open(original_image, "wb") as f:
 		#バイナリを1024ずつ書き込む
 		for chunk in message_content.iter_content():
 			f.write(chunk)
 
+	generateMozaic(original_image, "{message_id}-mozaic.jpg")
+
 	line_bot_api.reply_message(
 		event.reply_token,
 		ImageSendMessage(
-			original_content_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}.jpg",
-			preview_image_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}.jpg"
+			original_content_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}-mozaic.jpg",
+			preview_image_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}-mozaic.jpg"
 		)
 	)
 
