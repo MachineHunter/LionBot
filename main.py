@@ -1,8 +1,9 @@
+# coding: UTF-8
 from flask import Flask, request, abort
-from pathlib import Path
 import os
 import sys
 import json
+from mozaic import generateMozaic
 
 
 from linebot import (
@@ -80,21 +81,30 @@ def handle_message(event):
 def handle_image(event):
 	message_id = event.message.id
 	message_content = line_bot_api.get_message_content(message_id)
+	original_image = f"static/images/{message_id}.jpg"
+	mozaic_image = f"{message_id}-mozaic.jpg"
 
 	#画像の保存
-	#Flaskにより画像はstatic配下の以下のパスに保存される
-	with open(Path(f"static/images/{message_id}.jpg").absolute(), "wb") as f:
-		#バイナリを1024ずつ書き込む
+	with open(original_image, "wb") as f:
 		for chunk in message_content.iter_content():
 			f.write(chunk)
 
-	line_bot_api.reply_message(
-		event.reply_token,
-		ImageSendMessage(
-			original_content_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}.jpg",
-			preview_image_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}.jpg"
+	if generateMozaic(original_image, mozaic_image) == -1:
+		line_bot_api.reply_message(
+			event.reply_token,
+			ImageSendMessage(
+				original_content_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}.jpg",
+				preview_image_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}.jpg"
+			)
 		)
-	)
+	else:
+		line_bot_api.reply_message(
+			event.reply_token,
+			ImageSendMessage(
+				original_content_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}-mozaic.jpg",
+				preview_image_url = f"https://lionpro-linebot.herokuapp.com/static/images/{message_id}-mozaic.jpg"
+			)
+		)
 
 
 
